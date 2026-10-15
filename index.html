@@ -1,16 +1,91 @@
-<!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NetTimeManager</title><link rel="stylesheet" href="assets/style.css"></head>
-<body><div class="wrap">
-<header><strong><a href="index.html">NetTimeManager</a></strong>
-<nav><a class="active" href="index.html">Inicio</a><a href="dashboard.html">Dashboard</a><a href="reportes.html">Reportes</a><a href="login.html">Acceder</a></nav></header>
-<h1>Gestiona tiempo, equipos y productividad</h1>
-<p class="sub">Demo estática de NetTimeManager en GitHub Pages.</p>
-<p><a class="btn btn-primary" href="login.html">Acceder</a> <a class="btn btn-ghost" href="https://nettimemanager.com/" target="_blank" rel="noopener">Ir al sitio original</a></p>
-<div class="grid">
-<div class="card"><h3>Seguimiento de tiempo</h3><p>Horas por usuario, proyecto o tarea.</p></div>
-<div class="card"><h3>Reportes</h3><p>Métricas de productividad y cumplimiento.</p></div>
-<div class="card"><h3>Gestión de equipos</h3><p>Miembros, roles y asignaciones.</p></div>
-</div>
-<div class="note">Versión estática: no ejecuta backend .NET ni base de datos. Los datos son de ejemplo.</div>
-<footer>© NetTimeManager · Demo estática</footer>
-</div></body></html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    
+    <link rel="stylesheet" href="app.221ci0nfww.css">
+    <link rel="stylesheet" href="NetTimeManager.286htg3klj.styles.css">
+    <script type="importmap">{
+  "imports": {
+    "./Components/Layout/ReconnectModal.razor.js": "./Components/Layout/ReconnectModal.abdmv1u4y3.razor.js",
+    "./_framework/blazor.server.js": "./_framework/blazor.server.vmftroxvhh.js",
+    "./_framework/blazor.web.js": "./_framework/blazor.web.cd06xom9c5.js",
+    "./js/geolocation.js": "./js/geolocation.ik65len5v3.js"
+  },
+  "integrity": {
+    "./Components/Layout/ReconnectModal.abdmv1u4y3.razor.js": "sha256-5u+v90fOttEFzE2qHMGMOXmy93Ik/BaGqLrrnu6mdGU=",
+    "./Components/Layout/ReconnectModal.razor.js": "sha256-5u+v90fOttEFzE2qHMGMOXmy93Ik/BaGqLrrnu6mdGU=",
+    "./_framework/blazor.server.js": "sha256-Zx/IdBvZjJ92AN0hfW3ms/j1kIhk0LjrMykN19gPRTA=",
+    "./_framework/blazor.server.vmftroxvhh.js": "sha256-Zx/IdBvZjJ92AN0hfW3ms/j1kIhk0LjrMykN19gPRTA=",
+    "./_framework/blazor.web.cd06xom9c5.js": "sha256-YAhtfQ56hIoDLql59gFjN591KNN3UVG5LBZBUCZBsFY=",
+    "./_framework/blazor.web.js": "sha256-YAhtfQ56hIoDLql59gFjN591KNN3UVG5LBZBUCZBsFY=",
+    "./js/geolocation.ik65len5v3.js": "sha256-fnIAm56yXl+Dm3loo+Zr79CnhqSF6Xie9l3JjDfJgqg=",
+    "./js/geolocation.js": "sha256-fnIAm56yXl+Dm3loo+Zr79CnhqSF6Xie9l3JjDfJgqg="
+  }
+}</script>
+    <title>Iniciar Sesión - NetTimeManager</title></head>
+
+<body><div class="main-layout" b-w8offqo491=""><main class="content" b-w8offqo491="">
+
+<div class="login-container"><div class="login-card"><div class="login-header"><div class="app-logo"><div class="logo-icon">⏱️</div>
+                <h1 class="app-name" tabindex="-1">NetTimeManager</h1></div>
+            <p class="app-tagline">Sistema de Registro de Jornada Laboral</p>
+            <p class="compliance-badge">🇪🇸 Cumplimiento RD 8/2019</p></div>
+
+        <div class="login-content"><div class="identity-login"><div class="welcome-section"><h2>Iniciar Sesión</h2></div>
+
+                <form method="post" action="/Account/Login"><input type="hidden" name="returnUrl" value="/">
+
+                    <div class="form-group"><label for="emailOrUsername">Correo Electrónico o Nombre de Usuario</label>
+                        <input type="text" id="emailOrUsername" name="emailOrUsername" class="form-control" placeholder="" required=""></div>
+
+                    <div class="form-group"><label for="password">Contraseña</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="" required=""></div>
+
+                    <div class="form-group form-check"><input type="checkbox" id="rememberMe" name="rememberMe" class="form-check-input" value="true">
+                        <label class="form-check-label" for="rememberMe">Recordarme</label></div>
+
+                    <button type="submit" class="btn-login"><span class="btn-icon">🔐</span>
+                        <span class="btn-text">Iniciar Sesión</span></button></form>
+
+                <div class="security-notice"><span class="security-icon">🛡️</span>
+                    <span class="security-text">Autenticación segura mediante Identity</span></div></div></div>
+
+        <div class="login-footer"><p class="footer-text">© 2026 NetTimeManager - Sistema de Control de Jornada</p>
+            <p class="footer-legal">Desarrollado conforme al Real Decreto-ley 8/2019 en España</p></div></div>
+
+    <div class="login-background"><div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+        <div class="bg-shape shape-3"></div></div></div></main></div>
+
+<div id="blazor-error-ui" data-nosnippet="" b-w8offqo491="">
+    An unhandled error has occurred.
+    <a href="." class="reload" b-w8offqo491="">Reload</a>
+    <span class="dismiss" b-w8offqo491="">🗙</span></div>
+        <blazor-focus-on-navigate selector="h1"></blazor-focus-on-navigate>
+    <script type="module" src="Components/Layout/ReconnectModal.abdmv1u4y3.razor.js" b-5ry1xhfu2c=""></script>
+
+<dialog id="components-reconnect-modal" data-nosnippet="" b-5ry1xhfu2c=""><div class="components-reconnect-container" b-5ry1xhfu2c=""><div class="components-rejoining-animation" aria-hidden="true" b-5ry1xhfu2c=""><div b-5ry1xhfu2c=""></div>
+            <div b-5ry1xhfu2c=""></div></div>
+        <p class="components-reconnect-first-attempt-visible" b-5ry1xhfu2c="">
+            Rejoining the server...
+        </p>
+        <p class="components-reconnect-repeated-attempt-visible" b-5ry1xhfu2c="">
+            Rejoin failed... trying again in <span id="components-seconds-to-next-attempt" b-5ry1xhfu2c=""></span> seconds.
+        </p>
+        <p class="components-reconnect-failed-visible" b-5ry1xhfu2c="">
+            Failed to rejoin.<br b-5ry1xhfu2c="">Please retry or reload the page.
+        </p>
+        <button id="components-reconnect-button" class="components-reconnect-failed-visible" b-5ry1xhfu2c="">
+            Retry
+        </button>
+        <p class="components-pause-visible" b-5ry1xhfu2c="">
+            The session has been paused by the server.
+        </p>
+        <p class="components-resume-failed-visible" b-5ry1xhfu2c="">
+            Failed to resume the session.<br b-5ry1xhfu2c="">Please retry or reload the page.
+        </p>
+        <button id="components-resume-button" class="components-pause-visible components-resume-failed-visible" b-5ry1xhfu2c="">
+            Resume
+        </button></div></dialog>
+    <script src="_framework/blazor.web.cd06xom9c5.js"></script>
+    <script src="js/geolocation.ik65len5v3.js"></script></body></html>

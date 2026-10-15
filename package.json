@@ -1,0 +1,10 @@
+{
+  "name": "nettimemanager-site-tools",
+  "private": true,
+  "scripts": {
+    "shots": "node scripts/screenshots.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}
