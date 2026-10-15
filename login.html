@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acceder - NetTimeManager</title><link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="wrap">
+<header><strong><a href="index.html">NetTimeManager</a></strong>
+<nav><a href="index.html">Inicio</a><a href="dashboard.html">Dashboard</a><a href="reportes.html">Reportes</a><a class="active" href="login.html">Acceder</a></nav></header>
+<form onsubmit="event.preventDefault();location.href='dashboard.html'">
+<h2>Iniciar sesión</h2>
+<label for="u">Usuario o email</label><input id="u" type="text" placeholder="demo@nettimemanager.com">
+<label for="p">Contraseña</label><input id="p" type="password" placeholder="••••••••">
+<p><button class="btn btn-primary" type="submit">Entrar</button></p>
+<p class="sub">Demo: cualquier dato te lleva al dashboard.</p>
+</form>
+<footer>© NetTimeManager · Demo estática</footer>
+</div></body></html>
