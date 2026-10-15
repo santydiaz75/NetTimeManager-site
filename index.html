@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproducción demo NetTimeManager</title>
+    <style>
+        /* Estilos básicos opcionales para centrar el video y hacerlo responsivo */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000;
+        }
+        video {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 
+      Explicación de los atributos clave:
+      - autoplay: Inicia el video automáticamente al cargar la página.
+      - muted: Obligatorio para que los navegadores permitan el autoplay.
+      - playsinline: Evita que en dispositivos móviles (como iPhone) el video se abra en pantalla completa de forma nativa.
+      - controls: Añade botones de play/pausa y volumen para que el usuario pueda activar el sonido si quiere.
+    -->
+    <video autoplay muted playsinline controls width="800">
+        <source src="NetTimeManager.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de este video.
+    </video>
+
+</body>
+</html>
