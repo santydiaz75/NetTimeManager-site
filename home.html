@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    
+    
+    
+    <script type="importmap">{
+  "imports": {
+    "./Components/Layout/ReconnectModal.razor.js": "./Components/Layout/ReconnectModal.abdmv1u4y3.razor.js",
+    "./_framework/blazor.server.js": "./_framework/blazor.server.vmftroxvhh.js",
+    "./_framework/blazor.web.js": "./_framework/blazor.web.cd06xom9c5.js",
+    "./js/geolocation.js": "./js/geolocation.ik65len5v3.js"
+  },
+  "integrity": {
+    "./Components/Layout/ReconnectModal.abdmv1u4y3.razor.js": "sha256-5u+v90fOttEFzE2qHMGMOXmy93Ik/BaGqLrrnu6mdGU=",
+    "./Components/Layout/ReconnectModal.razor.js": "sha256-5u+v90fOttEFzE2qHMGMOXmy93Ik/BaGqLrrnu6mdGU=",
+    "./_framework/blazor.server.js": "sha256-Zx/IdBvZjJ92AN0hfW3ms/j1kIhk0LjrMykN19gPRTA=",
+    "./_framework/blazor.server.vmftroxvhh.js": "sha256-Zx/IdBvZjJ92AN0hfW3ms/j1kIhk0LjrMykN19gPRTA=",
+    "./_framework/blazor.web.cd06xom9c5.js": "sha256-YAhtfQ56hIoDLql59gFjN591KNN3UVG5LBZBUCZBsFY=",
+    "./_framework/blazor.web.js": "sha256-YAhtfQ56hIoDLql59gFjN591KNN3UVG5LBZBUCZBsFY=",
+    "./js/geolocation.ik65len5v3.js": "sha256-fnIAm56yXl+Dm3loo+Zr79CnhqSF6Xie9l3JjDfJgqg=",
+    "./js/geolocation.js": "sha256-fnIAm56yXl+Dm3loo+Zr79CnhqSF6Xie9l3JjDfJgqg="
+  }
+}</script>
+    <title>Registro de Jornada - NetTimeManager</title>  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body><div class="main-layout" b-w8offqo491=""><header class="app-header" b-w8offqo491=""><div class="header-content" b-w8offqo491=""><div class="app-logo" b-w8offqo491=""><span class="logo-icon" b-w8offqo491="">📋</span>
+                    <div class="logo-text" b-w8offqo491=""><h1 b-w8offqo491="" tabindex="-1">NetTimeManager</h1>
+                        <p b-w8offqo491="">Sistema de Registro de Jornada</p></div></div>
+                <nav class="header-actions" aria-label="Navegación principal" b-w8offqo491=""><a href="/" class="home-button" title="Volver al inicio" aria-label="Inicio" b-w8offqo491=""><span class="icon" b-w8offqo491="">🏠</span>
+                        Inicio
+                    </a>
+                    <a href="/ayuda" class="home-button" title="Manual de ayuda" aria-label="Ayuda" b-w8offqo491=""><span class="icon" b-w8offqo491="">❓</span>
+                        Ayuda
+                    </a>
+                    <!--!--><!--!--><div class="user-menu"><div class="user-avatar"><div class="avatar-placeholder">AD</div></div><!--!-->
+            <div class="user-info"><span class="user-name">administrador</span><!--!-->
+                <!--!--><span class="dropdown-arrow">▼</span></div></div></nav></div></header><main class="content" b-w8offqo491=""><!--!--><!--!--><!--!--><!--!-->
+
+<div class="home-container"><section class="clock-section" aria-label="Estado y fichaje"><div class="current-time"><div class="time-display">12:38:59</div><!--!-->
+                <div class="date-display">jueves, 15 octubre 2026</div></div><!--!--><div class="status-badge inactive"><span class="status-dot"></span>
+                    Sin jornada activa
+                </div><div class="action-buttons"><button class="btn btn-primary btn-large"><!--!--><span class="btn-icon">🕐</span>
+                        Iniciar Jornada
+                    </button></div></section><nav class="navigation-panel" aria-label="Navegación rápida"><!--!--><h2 class="panel-title">🧭 Navegación Rápida</h2>
+            <div class="nav-cards-grid"><!--!--><a href="/incidents/create" class="nav-card nav-card-danger"><div class="nav-card-icon">📝</div>
+                    <div class="nav-card-content"><h3>Registrar Incidencia</h3>
+                        <p>Crear registro manual que requiere aprobación</p></div>
+                    <div class="nav-card-arrow">→</div></a>
+
+                <!--!--><a href="/records" class="nav-card nav-card-primary"><div class="nav-card-icon">📊</div>
+                    <div class="nav-card-content"><h3>Mis Registros</h3>
+                        <p>Consulta tu historial completo de jornadas y descansos</p></div>
+                    <div class="nav-card-arrow">→</div></a>
+
+                <!--!--><a href="/reports" class="nav-card nav-card-success"><div class="nav-card-icon">📈</div>
+                    <div class="nav-card-content"><h3>Reportes Mensuales</h3>
+                        <p>Genera informes con cumplimiento legal RD 8/2019</p></div>
+                    <div class="nav-card-arrow">→</div></a><a href="/admin" class="nav-card nav-card-warning"><div class="nav-card-icon">⚙️</div><!--!-->
+                        <div class="nav-card-content"><h3>Administración</h3><!--!-->
+                            <p>Gestiona roles, incidencias y equipo</p></div><!--!-->
+                        <!--!--><div class="nav-card-arrow">→</div></a><!--!--><a href="/corrections" class="nav-card nav-card-warning"><div class="nav-card-icon">📋</div>
+                        <div class="nav-card-content"><h3>Bandeja de Correcciones</h3>
+                            <p>Aprueba o rechaza solicitudes de subsanación trazable</p></div>
+                        <div class="nav-card-arrow">→</div></a><!--!--><a href="/rlt" class="nav-card nav-card-info"><div class="nav-card-icon">👥</div>
+                        <div class="nav-card-content"><h3>Consulta RLT</h3>
+                            <p>Consolidado de plantilla en solo lectura y exportación mensual</p></div>
+                        <div class="nav-card-arrow">→</div></a><!--!--><a href="/inspector" class="nav-card nav-card-danger"><div class="nav-card-icon">🏛️</div>
+                        <div class="nav-card-content"><h3>Acceso ITSS</h3>
+                            <p>Auditoría remota de registros, trazabilidad e integridad</p></div>
+                        <div class="nav-card-arrow">→</div></a><a href="#" class="nav-card nav-card-info"><!--!--><div class="nav-card-icon">❓</div>
+                    <!--!--><div class="nav-card-content"><h3>Ayuda y Soporte</h3>
+                        <p>Guías, manuales y contacto con RRHH</p></div>
+                    <!--!--><div class="nav-card-arrow">→</div></a></div></nav></div></main><footer class="app-footer" b-w8offqo491=""><p b-w8offqo491="">© 2026 NetTimeManager - Sistema de Registro de Jornada según RD 8/2019</p>
+            <p class="footer-legal" b-w8offqo491="">Cumplimiento normativo LOPDGDD y RGPD</p></footer></div>
+
+<div id="blazor-error-ui" data-nosnippet="" b-w8offqo491="">
+    An unhandled error has occurred.
+    <a href="." class="reload" b-w8offqo491="">Reload</a>
+    <span class="dismiss" b-w8offqo491="">🗙</span></div>
+        <blazor-focus-on-navigate selector="h1"></blazor-focus-on-navigate>
+    <script type="module" src="Components/Layout/ReconnectModal.abdmv1u4y3.razor.js" b-5ry1xhfu2c=""></script>
+
+<dialog id="components-reconnect-modal" data-nosnippet="" b-5ry1xhfu2c=""><div class="components-reconnect-container" b-5ry1xhfu2c=""><div class="components-rejoining-animation" aria-hidden="true" b-5ry1xhfu2c=""><div b-5ry1xhfu2c=""></div>
+            <div b-5ry1xhfu2c=""></div></div>
+        <p class="components-reconnect-first-attempt-visible" b-5ry1xhfu2c="">
+            Rejoining the server...
+        </p>
+        <p class="components-reconnect-repeated-attempt-visible" b-5ry1xhfu2c="">
+            Rejoin failed... trying again in <span id="components-seconds-to-next-attempt" b-5ry1xhfu2c=""></span> seconds.
+        </p>
+        <p class="components-reconnect-failed-visible" b-5ry1xhfu2c="">
+            Failed to rejoin.<br b-5ry1xhfu2c="">Please retry or reload the page.
+        </p>
+        <button id="components-reconnect-button" class="components-reconnect-failed-visible" b-5ry1xhfu2c="">
+            Retry
+        </button>
+        <p class="components-pause-visible" b-5ry1xhfu2c="">
+            The session has been paused by the server.
+        </p>
+        <p class="components-resume-failed-visible" b-5ry1xhfu2c="">
+            Failed to resume the session.<br b-5ry1xhfu2c="">Please retry or reload the page.
+        </p>
+        <button id="components-resume-button" class="components-pause-visible components-resume-failed-visible" b-5ry1xhfu2c="">
+            Resume
+        </button></div></dialog>
+    <script src="_framework/blazor.web.cd06xom9c5.js"></script>
+    <script src="js/geolocation.ik65len5v3.js"></script></body></html>

@@ -12,15 +12,29 @@ const USER_SELECTOR = process.env.NTM_USER_SELECTOR || '#emailOrUsername';
 const PASS_SELECTOR = process.env.NTM_PASS_SELECTOR || '#password';
 const SUBMIT_SELECTOR = process.env.NTM_SUBMIT_SELECTOR || 'button.btn-login';
 
+const VIEWPORT = {
+  width: Number(process.env.NTM_WIDTH || 1440),
+  height: Number(process.env.NTM_HEIGHT || 900),
+};
+
+const HEADLESS = (process.env.NTM_HEADLESS || 'true').toLowerCase() !== 'false';
+
+// Rutas objetivo: ajusta según tu app
 let routes = [
-  { name: 'index', path: '/' },
-  { name: 'login', path: LOGIN_PATH },
-  { name: 'dashboard', path: '/dashboard', requiresAuth: true },
-  { name: 'reportes', path: '/reportes', requiresAuth: true },
+  { name: '01-home', path: '/', requiresAuth: false },
+  { name: '02-login', path: LOGIN_PATH, requiresAuth: false },
+  { name: '03-dashboard', path: '/dashboard', requiresAuth: true },
+  { name: '04-reportes', path: '/reportes', requiresAuth: true },
 ];
 
+// Permite sobreescribir rutas por variable JSON
 if (process.env.NTM_ROUTES_JSON) {
-  try { routes = JSON.parse(process.env.NTM_ROUTES_JSON); } catch {}
+  try {
+    routes = JSON.parse(process.env.NTM_ROUTES_JSON);
+    console.log('ℹ️ Usando rutas de NTM_ROUTES_JSON');
+  } catch {
+    console.log('⚠️ NTM_ROUTES_JSON inválido. Se usan rutas por defecto.');
+  }
 }
 
 function stamp() {
@@ -37,59 +51,148 @@ async function ensureDir(dir) {
   await fs.promises.mkdir(dir, { recursive: true });
 }
 
-async function saveHtml(page, outFile) {
-  const html = await page.content(); // DOM final renderizado
-  await fs.promises.writeFile(outFile, html, 'utf8');
+function forceLocalCss(html) {
+  // elimina links stylesheet existentes
+  let out = html.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+
+  // inserta assets/style.css antes de </head>
+  if (/<\/head>/i.test(out)) {
+    out = out.replace(/<\/head>/i, `  <link rel="stylesheet" href="assets/style.css">\n</head>`);
+  } else {
+    out = `<head>\n  <link rel="stylesheet" href="assets/style.css">\n</head>\n` + out;
+  }
+  return out;
 }
 
-async function tryLogin(page) {
-  if (!USER || !PASS) return false;
+async function saveHtmlWithLocalCss(page, outFile) {
+  const html = await page.content();
+  const fixed = forceLocalCss(html);
+  await fs.promises.writeFile(outFile, fixed, 'utf8');
+}
 
-  const loginUrl = new URL(LOGIN_PATH, BASE_URL).toString();
-  await page.goto(loginUrl, { waitUntil: 'networkidle' });
+async function tryAcceptCookies(page) {
+  const candidates = [
+    'button:has-text("Aceptar")',
+    'button:has-text("Accept")',
+    'button:has-text("Aceptar todo")',
+    '[id*="accept"]',
+    '[class*="accept"]',
+  ];
 
-  try {
-    await page.waitForSelector(USER_SELECTOR, { timeout: 15000 });
-    await page.fill(USER_SELECTOR, USER);
-    await page.fill(PASS_SELECTOR, PASS);
+  for (const sel of candidates) {
+    const el = page.locator(sel).first();
+    if (await el.count()) {
+      try {
+        await el.click({ timeout: 1000 });
+        console.log(`🍪 Cookie banner aceptado con selector: ${sel}`);
+        return;
+      } catch {}
+    }
+  }
+}
 
-    await Promise.all([
-      page.waitForLoadState('networkidle').catch(() => {}),
-      page.click(SUBMIT_SELECTOR),
-    ]);
-  } catch {
+async function login(page) {
+  if (!USER || !PASS) {
+    console.log('ℹ️ NTM_USER/NTM_PASS no definidos. Se omite login.');
     return false;
   }
 
-  await page.waitForTimeout(1200);
-  const stillHasUserField = (await page.locator(USER_SELECTOR).count()) > 0;
-  const stillOnLogin = page.url().toLowerCase().includes(LOGIN_PATH.toLowerCase());
-  return !stillHasUserField || !stillOnLogin;
+  const loginUrl = new URL(LOGIN_PATH, BASE_URL).toString();
+  console.log(`🔐 Login en: ${loginUrl}`);
+  await page.goto(loginUrl, { waitUntil: 'networkidle' });
+  await tryAcceptCookies(page);
+
+  // espera a que Blazor/render termine
+  await page.waitForSelector(USER_SELECTOR, { timeout: 20000 });
+
+  await page.fill(USER_SELECTOR, USER);
+  await page.fill(PASS_SELECTOR, PASS);
+
+  await Promise.all([
+    page.waitForLoadState('networkidle').catch(() => {}),
+    page.click(SUBMIT_SELECTOR),
+  ]);
+
+  await page.waitForTimeout(1500);
+
+  // login confirmado si no vemos el input usuario o no estamos en login
+  const stillUser = (await page.locator(USER_SELECTOR).count()) > 0;
+  const stillLoginUrl = page.url().toLowerCase().includes(LOGIN_PATH.toLowerCase());
+  const ok = !stillUser || !stillLoginUrl;
+
+  console.log(ok ? `✅ Login OK (${page.url()})` : `⚠️ Login no confirmado (${page.url()})`);
+  return ok;
 }
 
 (async () => {
-  const outRoot = path.join(process.cwd(), 'html-export', stamp());
-  await ensureDir(outRoot);
+  const runId = stamp();
+  const outRoot = path.join(process.cwd(), 'export', runId);
+  const htmlDir = path.join(outRoot, 'html');
+  const pngDir = path.join(outRoot, 'png');
+  const assetsDir = path.join(outRoot, 'html', 'assets');
 
-  const headless = (process.env.NTM_HEADLESS || 'true').toLowerCase() !== 'false';
-  const browser = await chromium.launch({ headless });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const page = await context.newPage();
+  await ensureDir(htmlDir);
+  await ensureDir(pngDir);
+  await ensureDir(assetsDir);
 
-  const loggedIn = await tryLogin(page);
-
-  for (const r of routes) {
-    if (r.requiresAuth && !loggedIn) continue;
-
-    const url = new URL(r.path, BASE_URL).toString();
-    await page.goto(url, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1200);
-
-    const outFile = path.join(outRoot, `${r.name}.html`);
-    await saveHtml(page, outFile);
-    console.log(`Guardado: ${outFile}`);
+  // Copia style.css local del repo si existe
+  const localStyle = path.join(process.cwd(), 'assets', 'style.css');
+  if (fs.existsSync(localStyle)) {
+    await fs.promises.copyFile(localStyle, path.join(assetsDir, 'style.css'));
+    console.log('🎨 Copiado assets/style.css local al export.');
+  } else {
+    // fallback mínimo
+    await fs.promises.writeFile(path.join(assetsDir, 'style.css'), 'body{font-family:system-ui,sans-serif;margin:0;padding:20px}', 'utf8');
+    console.log('⚠️ No se encontró assets/style.css local. Se creó uno mínimo.');
   }
 
+  const browser = await chromium.launch({ headless: HEADLESS });
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  const page = await context.newPage();
+
+  console.log(`🌐 BASE_URL: ${BASE_URL}`);
+  const loggedIn = await login(page);
+
+  const results = [];
+
+  for (const r of routes) {
+    if (r.requiresAuth && !loggedIn) {
+      console.log(`⏭️ Omitiendo ${r.name} (requiere auth)`);
+      continue;
+    }
+
+    const url = new URL(r.path, BASE_URL).toString();
+    console.log(`→ Navegando: ${url}`);
+
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await tryAcceptCookies(page);
+    await page.waitForTimeout(1200);
+
+    const htmlPath = path.join(htmlDir, `${r.name}.html`);
+    const pngPath = path.join(pngDir, `${r.name}.png`);
+
+    await saveHtmlWithLocalCss(page, htmlPath);
+    await page.screenshot({ path: pngPath, fullPage: true });
+
+    results.push({ name: r.name, url, htmlPath, pngPath });
+    console.log(`   ✅ HTML: ${htmlPath}`);
+    console.log(`   ✅ PNG : ${pngPath}`);
+  }
+
+  // índice local para abrir fácil
+  const indexHtml = `<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Export NetTimeManager</title><link rel="stylesheet" href="html/assets/style.css"></head>
+<body><div style="padding:20px">
+<h1>Export NetTimeManager (${runId})</h1>
+<ul>
+${results.map(r => `<li><strong>${r.name}</strong> — <a href="./html/${path.basename(r.htmlPath)}">HTML</a> | <a href="./png/${path.basename(r.pngPath)}">PNG</a> | <a href="${r.url}" target="_blank" rel="noopener">URL</a></li>`).join('\n')}
+</ul></div></body></html>`;
+  await fs.promises.writeFile(path.join(outRoot, 'index.html'), indexHtml, 'utf8');
+
   await browser.close();
-  console.log(`✅ Export HTML completado en: ${outRoot}`);
+
+  console.log('\n✅ Proceso completado');
+  console.log(`📁 Carpeta: ${outRoot}`);
+  console.log(`📄 Índice:  ${path.join(outRoot, 'index.html')}`);
 })();
