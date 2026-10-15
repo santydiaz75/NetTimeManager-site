@@ -51,22 +51,19 @@ async function ensureDir(dir) {
   await fs.promises.mkdir(dir, { recursive: true });
 }
 
-function forceLocalCss(html) {
-  // elimina links stylesheet existentes
-  let out = html.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+function fixAssetUrls(html) {
+  // Convierte rutas relativas a absolutas según BASE_URL para que carguen en el HTML exportado
+  const base = new URL(BASE_URL);
+  const origin = base.origin;
 
-  // inserta assets/style.css antes de </head>
-  if (/<\/head>/i.test(out)) {
-    out = out.replace(/<\/head>/i, `  <link rel="stylesheet" href="assets/style.css">\n</head>`);
-  } else {
-    out = `<head>\n  <link rel="stylesheet" href="assets/style.css">\n</head>\n` + out;
-  }
-  return out;
+  return html
+    .replace(/(href|src)=["']\/([^"']+)["']/gi, (_, attr, p) => `${attr}="${origin}/${p}"`)
+    .replace(/(href|src)=["']\.\/([^"']+)["']/gi, (_, attr, p) => `${attr}="${origin}/${p}"`);
 }
 
-async function saveHtmlWithLocalCss(page, outFile) {
+async function saveHtml(page, outFile) {
   const html = await page.content();
-  const fixed = forceLocalCss(html);
+  const fixed = fixAssetUrls(html);
   await fs.promises.writeFile(outFile, fixed, 'utf8');
 }
 
@@ -102,7 +99,6 @@ async function login(page) {
   await page.goto(loginUrl, { waitUntil: 'networkidle' });
   await tryAcceptCookies(page);
 
-  // espera a que Blazor/render termine
   await page.waitForSelector(USER_SELECTOR, { timeout: 20000 });
 
   await page.fill(USER_SELECTOR, USER);
@@ -115,7 +111,6 @@ async function login(page) {
 
   await page.waitForTimeout(1500);
 
-  // login confirmado si no vemos el input usuario o no estamos en login
   const stillUser = (await page.locator(USER_SELECTOR).count()) > 0;
   const stillLoginUrl = page.url().toLowerCase().includes(LOGIN_PATH.toLowerCase());
   const ok = !stillUser || !stillLoginUrl;
@@ -129,22 +124,9 @@ async function login(page) {
   const outRoot = path.join(process.cwd(), 'export', runId);
   const htmlDir = path.join(outRoot, 'html');
   const pngDir = path.join(outRoot, 'png');
-  const assetsDir = path.join(outRoot, 'html', 'assets');
 
   await ensureDir(htmlDir);
   await ensureDir(pngDir);
-  await ensureDir(assetsDir);
-
-  // Copia style.css local del repo si existe
-  const localStyle = path.join(process.cwd(), 'assets', 'style.css');
-  if (fs.existsSync(localStyle)) {
-    await fs.promises.copyFile(localStyle, path.join(assetsDir, 'style.css'));
-    console.log('🎨 Copiado assets/style.css local al export.');
-  } else {
-    // fallback mínimo
-    await fs.promises.writeFile(path.join(assetsDir, 'style.css'), 'body{font-family:system-ui,sans-serif;margin:0;padding:20px}', 'utf8');
-    console.log('⚠️ No se encontró assets/style.css local. Se creó uno mínimo.');
-  }
 
   const browser = await chromium.launch({ headless: HEADLESS });
   const context = await browser.newContext({ viewport: VIEWPORT });
@@ -171,7 +153,7 @@ async function login(page) {
     const htmlPath = path.join(htmlDir, `${r.name}.html`);
     const pngPath = path.join(pngDir, `${r.name}.png`);
 
-    await saveHtmlWithLocalCss(page, htmlPath);
+    await saveHtml(page, htmlPath);
     await page.screenshot({ path: pngPath, fullPage: true });
 
     results.push({ name: r.name, url, htmlPath, pngPath });
@@ -179,15 +161,34 @@ async function login(page) {
     console.log(`   ✅ PNG : ${pngPath}`);
   }
 
-  // índice local para abrir fácil
   const indexHtml = `<!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Export NetTimeManager</title><link rel="stylesheet" href="html/assets/style.css"></head>
-<body><div style="padding:20px">
-<h1>Export NetTimeManager (${runId})</h1>
-<ul>
-${results.map(r => `<li><strong>${r.name}</strong> — <a href="./html/${path.basename(r.htmlPath)}">HTML</a> | <a href="./png/${path.basename(r.pngPath)}">PNG</a> | <a href="${r.url}" target="_blank" rel="noopener">URL</a></li>`).join('\n')}
-</ul></div></body></html>`;
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Export NetTimeManager</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; background: #f7f7f8; color: #111; }
+    a { color: #0b57d0; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { line-height: 1.9; }
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 20px; max-width: 900px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Export NetTimeManager (${runId})</h1>
+    <ul>
+      ${results
+        .map(
+          r => `<li><strong>${r.name}</strong> — <a href="./html/${path.basename(r.htmlPath)}">HTML</a> | <a href="./png/${path.basename(r.pngPath)}">PNG</a> | <a href="${r.url}" target="_blank">Original</a></li>`
+        )
+        .join('\n      ')}
+    </ul>
+  </div>
+</body>
+</html>`;
+
   await fs.promises.writeFile(path.join(outRoot, 'index.html'), indexHtml, 'utf8');
 
   await browser.close();
